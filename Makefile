@@ -1,8 +1,11 @@
-CC= g++
-FLAGS= -Wall -Wextra -Werror
+CC= clang++
+FLAGS= -Wall -Wextra -std=c++11 -g
 NAME= avm
 
-SRC= main.cpp
+SRC= main.cpp \
+	 Lexer.cpp \
+	 Token.cpp \
+	 Grammar.cpp
 
 OBJ= $(SRC:.cpp=.o)
 
@@ -25,6 +28,6 @@ clean:
 
 fclean: clean
 		echo "\t\xF0\x9F\x9A\xBD   Full Clean"
-	rm-rf $(NAME)
+	rm -rf $(NAME)
 
 re: fclean all

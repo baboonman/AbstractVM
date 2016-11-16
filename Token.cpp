@@ -24,23 +24,26 @@ Token&   					Token::operator=(const Token & rhs)
 	return *this;
 }
 
-Token::Type					Token::getType(void)
+Token::Type					Token::getType(void) const
 {
 	return (this->_type);
 }
 
-std::string					Token::getTypeToString(void)
+std::string					Token::getTypeToString(void) const
 {
 	switch (this->_type) {
-		case INST    : return "INST";
-		case OPTYPE  : return "OPTYPE";
-		case OPINT   : return "OPINT";
-		case OPFLOAT : return "OPFLOAT";
-		case UNKNOWN : return "UNKNOWN";
+		case Type::INST    : return "INST";
+		case Type::OPTYPE  : return "OPTYPE";
+		case Type::OPINT   : return "OPINT";
+		case Type::OPFLOAT : return "OPFLOAT";
+		case Type::DELIM   : return "DELIM";
+		case Type::COMMENT : return "COMMENT";
+		case Type::EOI     : return "EOI";
+		case Type::UNKNOWN : return "UNKNOWN";
 	}
 }
 
-std::string					Token::getValue(void)
+std::string					Token::getValue(void) const
 {
 	return (this->_value);
 }

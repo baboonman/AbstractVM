@@ -1,0 +1,4 @@
+- Lexer 
+	- errors
+		- unknown token
+		- parenthesis
