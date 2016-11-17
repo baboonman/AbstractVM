@@ -2,12 +2,11 @@
 # define IOPERAND_HPP
 
 # include <string>
-# include <iostream>
 
 class								IOperand
 {
 	public:
-		enum	eOperandType { Int8, Int16, Int32, Float, Double };
+		enum class eOperandType {Int8 = 0, Int16 = 1, Int32 = 2, Float = 3, Double = 4};
 
 		virtual						~IOperand( void ) {}
 		virtual int					getPrecision( void ) const = 0;
@@ -16,8 +15,8 @@ class								IOperand
 		virtual IOperand const *	operator+( IOperand const & rhs ) const = 0;
 		virtual IOperand const *	operator-( IOperand const & rhs ) const = 0;
 		virtual IOperand const *	operator*( IOperand const & rhs ) const = 0;
-		virtual IOperand const *	operator/( IOperand const & rhs ) const = 0;
-		virtual IOperand const *	operator%( IOperand const & rhs ) const = 0;
+//		virtual IOperand const *	operator/( IOperand const & rhs ) const = 0;
+//		virtual IOperand const *	operator%( IOperand const & rhs ) const = 0;
 						
 		virtual std::string const &	toString( void ) const = 0;
 };

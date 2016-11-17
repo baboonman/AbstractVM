@@ -1,120 +1,123 @@
 #ifndef OPERAND_HPP
 # define OPERAND_HPP
 
+# include <iostream>
+# include <sstream>
 # include "IOperand.hpp"
 
 template<class T>
-class						Operand : public IOperand
+class								Operand : public IOperand
 {
 	public:
-							Operand(std::string op, IOperand::eOperandType type);
-		T					toT(std::string s, IOperand::eOperandType type);
-		T					ft_mod(T a, T b);
+									Operand(std::string op, IOperand::eOperandType type);
+		T							toT(std::string s) const;
+		T							ft_mod(T a, T b);
 
-		IOperand::eOperandType	getType( void ) const;
-		int						getPrecision( void );
-		std::string const &		toString( void );
+		IOperand::eOperandType		getType( void ) const;
+		int							getPrecision( void ) const;
+		std::string const &			toString( void ) const;
+		T							getOp() const;
+
+		IOperand const *			operator+(IOperand const & rhs) const;
+		IOperand const *			operator-(IOperand const & rhs) const;
+		IOperand const *			operator*(IOperand const & rhs) const;
 
 	private:
-		T					_op;
+		T							_op;
+		std::string					_op_str;
 		IOperand::eOperandType		_type;
 };
 
 template<class T>
-Operand<T>::Operand(std::string op, IOperand::eOperandType type) : _type(type)
+Operand<T>::Operand(std::string op, IOperand::eOperandType type) : _op_str(op), _type(type)
 {
-	this->_op = this->_toT(op);
+	this->_op = this->toT(op);
 }
 
-/*
 template<class T>
-Operand<T>::~Operand() {}
-*/
-
-template<class T>
-int							Operand<T>::getPrecision( void )
+int									Operand<T>::getPrecision( void ) const
 {
-	int						precision;
+	int								precision;
 
-	precision = this->_type;
+	precision = static_cast<int>(this->_type);
 	return (precision);
 }
 
 template<class T>
-IOperand::eOperandType		Operand<T>::getType( void ) const
+IOperand::eOperandType				Operand<T>::getType( void ) const
 {
 	return (this->_type);
 }
 
 template<class T>
-std::string	const &			Operand<T>::toString( void )
+T									Operand<T>::getOp() const
 {
-	std::string				s;
+	return (this->_op);
+}
 
-	switch (this->_type)
-	{
-		case Int8:
-		case Int16:
-		case Int32:
-			s = std::itoa(this->_op);
-			break;
-		case Float :
-			s = std::ftoa(this->_op);
-			break;
-		case Double :
-			s = std::dtoa(this->_op);
-			break;
-	}
-	return (s);
+template<class T>
+std::string	const &					Operand<T>::toString( void ) const
+{
+	return (this->_op_str);
+}
+
+template<class T>
+T									Operand<T>::toT(std::string s) const
+{
+	T								op;
+
+	if (!(std::istringstream(s) >> op))
+		op = 0;
+	return (op);
+}
+
+template<class T>
+IOperand const *					Operand<T>::operator+(IOperand const & rhs) const
+{
+	T								val;
+	IOperand::eOperandType			opType;
+
+	if (this->_type >= rhs.getType())
+		opType = this->_type;
+	else
+		opType = rhs.getType();
+	val = this->_op + this->toT(rhs.toString());
+	return new Operand(std::to_string(val), opType);
+}
+
+template<class T>
+IOperand const *					Operand<T>::operator-(IOperand const & rhs) const
+{
+	T								val;
+	IOperand::eOperandType			opType;
+
+	if (this->_type >= rhs.getType())
+		opType = this->_type;
+	else
+		opType = rhs.getType();
+	val = this->_op - this->toT(rhs.toString());
+	return new Operand(std::to_string(val), opType);
+}
+
+template<class T>
+IOperand const *					Operand<T>::operator*(IOperand const & rhs) const
+{
+	T								val;
+	IOperand::eOperandType			opType;
+
+	if (this->_type >= rhs.getType())
+		opType = this->_type;
+	else
+		opType = rhs.getType();
+	val = this->_op * this->toT(rhs.toString());
+	return new Operand(std::to_string(val), opType);
 }
 
 /*
 template<class T>
-IOperand const *			Operand<T>::operator+(IOperand const & rhs)
+IOperand const *					Operand<T>::operator/(IOperand const & rhs)
 {
-	T						val;
-	IOperand::eOperandType			opType;
-
-	if (this->_type >= rhs.getType())
-		opType = this->_type;
-	else
-		opType = rhs.getType();
-	val = this->_op + rhs._op;
-	return new Operand(this->_toString(val), opType);
-}
-
-template<class T>
-IOperand const *			Operand<T>::operator-(IOperand const & rhs)
-{
-	T						val;
-	IOperand::eOperandType			opType;
-
-	if (this->_type >= rhs.getType)
-		opType = this->_type;
-	else
-		opType = rhs.getType();
-	val = this->_op - rhs._op;
-	return new Operand(this->_toString(val), opType);
-}
-
-template<class T>
-IOperand const *			Operand<T>::operator*(IOperand const & rhs)
-{
-	T						val;
-	IOperand::eOperandType			opType;
-
-	if (this->_type >= rhs.getType())
-		opType = this->_type;
-	else
-		opType = rhs.getType();
-	val = this->_op * rhs._op;
-	return new Operand(this->_toString(val), opType);
-}
-
-template<class T>
-IOperand const *			Operand<T>::operator/(IOperand const & rhs)
-{
-	T						val;
+	T								val;
 	IOperand::eOperandType			opType;
 
 	if (this->_type >= rhs.getType())
@@ -126,7 +129,7 @@ IOperand const *			Operand<T>::operator/(IOperand const & rhs)
 }
 
 template<class T>
-T							Operand<T>::ft_mod(T a, T b)
+T									Operand<T>::ft_mod(T a, T b)
 {
 	while (a > b)
 		a = a - b;
@@ -134,9 +137,9 @@ T							Operand<T>::ft_mod(T a, T b)
 }
 
 template<class T>
-IOperand const *			Operand<T>::operator%(IOperand const & rhs)
+IOperand const *					Operand<T>::operator%(IOperand const & rhs)
 {
-	T						val;
+	T								val;
 	IOperand::eOperandType			opType;
 
 	if (this->_type >= rhs.getType())
@@ -147,26 +150,5 @@ IOperand const *			Operand<T>::operator%(IOperand const & rhs)
 	return new Operand(this->_toString(val), opType);
 }
 */
-template<class T>
-T							Operand<T>::toT(std::string s, eOperandType type)
-{
-	T						op;
-
-	switch (type)
-	{
-		case Int8:
-		case Int16:
-		case Int32:
-			op = std::atoi(s);
-			break;
-		case Float :
-			op = std::atof(s);
-			break;
-		case Double :
-			op = std::atod(s);
-			break;
-	}
-	return (op);
-}
 
 #endif
