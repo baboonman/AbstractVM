@@ -7,7 +7,7 @@ int			main(void)
 	Lexer	lex;
 	std::vector<Token>		tokens;
 
-	std::ifstream t("toto.avm");
+	std::ifstream t("file.avm");
 	std::stringstream buffer;
 	buffer << t.rdbuf();
 

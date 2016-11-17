@@ -5,7 +5,9 @@ NAME= avm
 SRC= main.cpp \
 	 Lexer.cpp \
 	 Token.cpp \
-	 Grammar.cpp
+	 Grammar.cpp \
+	 OperandFactory.cpp
+
 
 OBJ= $(SRC:.cpp=.o)
 
