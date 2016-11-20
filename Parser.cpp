@@ -19,61 +19,55 @@ Parser    &Parser::operator=(const Parser &rhs)
 	return *this;
 }
 
-void					Parser::addIns(std::vector<t_ins>::iterator pos)
-
-std::vector<t_ins>		Parser::parseToken(std::vector<Token> tokens)
+std::vector<Grammar::t_ins>		Parser::parseTokens(std::vector<Token> tokens)
 {
-	Token::Type			lastType = Token::Type::DELIM;
-	bool				start = true;
-	t_ins				new_ins;
-	bool				ins_in_progress = false;
-	bool				waitingForParam = false;
-
-	for (auto it : tokens)
-	{
-
-		if (start || lastType == Token::Type::DELIM)
-		{
-			// check for instructions
-			if (it.getType() != Token::Type::INS)
-				//errror
-			else
-			{
-				ins_info = insMap.at(it.getValue());
-				new_ins.opcode = ins_info.opcode;
-				waitingForParam = ins_info.hasParam;
-			}
-		}
-		if (lastType == )
-		lastType
-
-	}
-}
-std::vector<t_ins>		Parser::parseToken(std::vector<Token> tokens)
-{
-	int					i = 0;
-	std::string			current_ins;
-	std::vector<t_ins>	program;
-	t_ins				new_ins;
-	t_ins_info			info;
-	Token				token;
+	std::size_t					i = 0;
+	std::vector<Grammar::t_ins>	program;
+	Grammar::t_ins				new_ins;
+	Grammar::t_ins_info			info;
+	Token						token;
+	auto						token_size = tokens.size();
+	eOperandType				arg_type;
 
 	do {
 		token = tokens[i];
+		std::cout << "got token n: " << i << std::endl;
 		if (token.getType() == Token::Type::INST)
 		{
-			info = insMap.at(token.getValue);
+			info = Grammar::insMap.at(token.getValue());
 			new_ins.opcode = info.opcode;
 			i++;
 			if (info.hasParam)
 			{
+				std::cout << "has param" << std::endl;
+				if (i == token_size)
+					std::cout << "error expecting argument" << std::endl;
+					// error
 				token = tokens[i];
-				if (token.getType() == Token::Type::OPINT || token.getType() == Token::Type::OPFLOAT)
+				std::cout << "got token n: " << i << std::endl;
+				std::cout << "type : " << static_cast<int>(token.getType()) << std::endl;
+				if (token.getType() == Token::Type::OPTYPE)
 				{
-					new_ins.operand = this->_factory.createOperand();
+					std::cout << "getting param" << std::endl;
+					arg_type = Grammar::opTypeMap.at(token.getValue());
+					i++;
+					if (i != token_size) {
+						token = tokens[i];
+						std::cout << "got token n: " << i << std::endl;
+					}
+					else
+						std::cout << "error expecting value" << std::endl;
+					new_ins.operand = this->_factory.createOperand(arg_type, token.getValue());
+					program.push_back(new_ins);
 				}
 			}
-
+			else
+			{
+				new_ins.operand = nullptr;
+				program.push_back(new_ins);
+			}
 		}
-	} while (i < Token.size() || )
+		i++;
+	} while (i < token_size);
+	return program;
 }

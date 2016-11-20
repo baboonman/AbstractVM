@@ -3,7 +3,9 @@ FLAGS= -Wall -Wextra -std=c++11 -g
 NAME= avm
 
 SRC= main.cpp \
+	 VMachine.cpp \
 	 Lexer.cpp \
+	 Parser.cpp \
 	 Token.cpp \
 	 Grammar.cpp \
 	 OperandFactory.cpp
