@@ -1,6 +1,6 @@
 #include "Parser.hpp"
 
-Parser::Parser(void) : _factory()
+Parser::Parser(void) : _factory(), _hasError(false)
 {
 }
 
@@ -15,9 +15,21 @@ Parser::~Parser(void)
 
 Parser    &Parser::operator=(const Parser &rhs)
 {
-	(void)rhs;
+	this->_hasError = rhs.hasError();
+	this->_errorLog = rhs.getErrorLog();
 	return *this;
 }
+
+bool		Parser::hasError(void) const
+{
+	return this->_hasError;
+}
+
+const std::string &				Parser::getErrorLog(void) const
+{
+	return this->_errorLog;
+}
+
 
 std::vector<Grammar::t_ins>		Parser::parseTokens(std::vector<Token> tokens)
 {
@@ -28,31 +40,58 @@ std::vector<Grammar::t_ins>		Parser::parseTokens(std::vector<Token> tokens)
 	Token						token;
 	auto						token_size = tokens.size();
 	eOperandType				arg_type;
+	int							line = 1;
+	bool						onNewLine = true;
 
 	do {
 		token = tokens[i];
-		if (token.getType() == Token::Type::INST)
+		if (token.getType() == Token::Type::DELIM) {
+			onNewLine = true;
+			line++;
+		}
+
+		else if (token.getType() == Token::Type::INST && onNewLine)
 		{
+			onNewLine = false;
 			info = Grammar::insMap.at(token.getValue());
 			new_ins.opcode = info.opcode;
 			i++;
 			if (info.hasParam)
 			{
 				if (i == token_size)
-					std::cout << "error expecting argument" << std::endl;
-					// error
-				token = tokens[i];
-				if (token.getType() == Token::Type::OPTYPE)
+					this->_addError("premature end of input.", line);
+				else
 				{
-					arg_type = Grammar::opTypeMap.at(token.getValue());
-					i++;
-					if (i != token_size) {
-						token = tokens[i];
+					token = tokens[i];
+					if (token.getType() == Token::Type::OPTYPE)
+					{
+						arg_type = Grammar::opTypeMap.at(token.getValue());
+						i++;
+						if (i == token_size)
+							this->_addError("premature end of input.", line);
+						else
+						{
+							token = tokens[i];
+							if (token.getType() == Token::Type::OPSCAL)
+							{
+								try {
+									new_ins.operand = this->_factory.createOperand(arg_type, token.getValue());
+									program.push_back(new_ins);
+								} catch (OverflowError &e) {
+									this->_addError(e, line);
+								}
+							}
+							else
+							{
+								this->_addError("instruction expecting param.", line);
+								i--;
+							}
+						}
 					}
 					else
-						std::cout << "error expecting value" << std::endl;
-					new_ins.operand = this->_factory.createOperand(arg_type, token.getValue());
-					program.push_back(new_ins);
+					{
+						this->_addError("instruction expecting param.", line);
+					}
 				}
 			}
 			else
@@ -61,7 +100,30 @@ std::vector<Grammar::t_ins>		Parser::parseTokens(std::vector<Token> tokens)
 				program.push_back(new_ins);
 			}
 		}
+		else 
+		{
+			this->_addError("stray token: " + token.getValue(), line);
+		}
+
 		i++;
 	} while (i < token_size);
 	return program;
+}
+
+void						Parser::_addError(std::string const & error, int line)
+{
+	if (!this->_hasError)
+		this->_hasError = true;
+	this->_errorLog += "\033[33mSyntax error\033[0m on line " + std::to_string(line) + ": ";
+	this->_errorLog += error;
+	this->_errorLog += "\n";
+}
+
+void						Parser::_addError(const OverflowError & e, int line)
+{
+	if (!this->_hasError)
+		this->_hasError = true;
+	this->_errorLog += "\033[35mOver/Underflow error\033[0m on line " + std::to_string(line) + ": ";
+	this->_errorLog += e.what();
+	this->_errorLog += "\n";
 }

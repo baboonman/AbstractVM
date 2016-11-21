@@ -6,7 +6,7 @@
 class						Token
 {
 	public:
-		enum class Type		{INST, OPTYPE, OPINT, OPFLOAT, DELIM, COMMENT, EOI, UNKNOWN};
+		enum class Type		{INST, OPTYPE, OPINT, OPFLOAT, OPSCAL, DELIM, COMMENT, EOI, UNKNOWN};
 		
 							Token(void);
 							Token(const Token & rhs);

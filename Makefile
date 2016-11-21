@@ -11,6 +11,7 @@ SRC= main.cpp \
 	 ExecutionException.cpp \
 	 AssertFailure.cpp \
 	 StackSizeError.cpp \
+	 OverflowError.cpp \
 	 OperandFactory.cpp
 
 

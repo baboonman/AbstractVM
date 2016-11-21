@@ -5,6 +5,7 @@
 # include "OperandFactory.hpp"
 # include "Grammar.hpp"
 # include "Token.hpp"
+# include "OverflowError.hpp"
 
 class							Parser
 {
@@ -16,8 +17,16 @@ class							Parser
 
 		std::vector<Grammar::t_ins>		parseTokens(std::vector<Token>);
 
+		bool						hasError(void) const;
+		const std::string &			getErrorLog(void) const;
+
 	private:
-		OperandFactory			_factory;
+		void						_addError(std::string const & error, int line);
+		void						_addError(const OverflowError &e, int line);
+
+		OperandFactory				_factory;
+		bool						_hasError;
+		std::string					_errorLog;
 
 };
 

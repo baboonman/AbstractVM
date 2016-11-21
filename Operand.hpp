@@ -3,7 +3,9 @@
 
 # include <iostream>
 # include <sstream>
+# include <cstdint>
 # include "IOperand.hpp"
+# include "OverflowError.hpp"
 
 template<class T>
 class								Operand : public IOperand
@@ -68,9 +70,29 @@ template<class T>
 T									Operand<T>::_toT(std::string s) const
 {
 	T								op;
+	std::istringstream				ss(s);
 
-	if (!(std::istringstream(s) >> op))
-		op = 0;
+	ss >> op;
+	if (!ss)
+		throw OverflowError("overflow with value ", s);
+	return (op);
+}
+
+template<>
+inline int8_t								Operand<int8_t>::_toT(std::string s) const
+{
+	int8_t							op;
+	int16_t							tmp;
+	std::istringstream				ss(s);
+
+	ss >> tmp;
+	if (!ss || (tmp < std::numeric_limits<int8_t>::min() || tmp > std::numeric_limits<int8_t>::max()))
+		throw OverflowError("overflow with value ", s);
+	else
+	{
+		ss.clear();
+		ss >> op;
+	}
 	return (op);
 }
 

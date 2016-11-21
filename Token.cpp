@@ -36,6 +36,7 @@ std::string					Token::getTypeToString(void) const
 		case Type::OPTYPE  : return "OPTYPE";
 		case Type::OPINT   : return "OPINT";
 		case Type::OPFLOAT : return "OPFLOAT";
+		case Type::OPSCAL  : return "OPSCAL";
 		case Type::DELIM   : return "DELIM";
 		case Type::COMMENT : return "COMMENT";
 		case Type::EOI     : return "EOI";

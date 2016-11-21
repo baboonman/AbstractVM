@@ -26,16 +26,21 @@ void		print_ins(Grammar::t_ins ins)
 		std::cout << " with operand " << ins.operand->toString() << std::endl;
 }
 
-int			main(void)
+int			main(int ac, char **av)
 {
 	Lexer	lex;
 	Parser	pars;
 	VMachine	machina;
+	std::string		input = "file.avm";
 
 	std::vector<Token>				tokens;
 	std::vector<Grammar::t_ins>		program;
 
-	std::ifstream t("file.avm");
+	if (ac == 2)
+	{
+		input = av[1];
+	}
+	std::ifstream t(input);
 	std::stringstream buffer;
 	buffer << t.rdbuf();
 
@@ -54,7 +59,9 @@ int			main(void)
 	}
 	if (lex.hasError())
 		std::cout << lex.getErrorLog();
-	else {
+	if (pars.hasError())
+		std::cout << pars.getErrorLog();
+	if (!lex.hasError() && !pars.hasError()) {
 		std::cout << "Execution" << std::endl;
 		machina.execute(program);
 	}
