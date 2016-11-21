@@ -1,6 +1,6 @@
 #include "Lexer.hpp"
 
-Lexer::Lexer(void)
+Lexer::Lexer(void) : _hasError(false)
 {
 }
 
@@ -15,7 +15,8 @@ Lexer::~Lexer(void)
 
 Lexer&						Lexer::operator=(const Lexer & rhs)
 {
-	(void)rhs;
+	this->_hasError = rhs.hasError();
+	this->_errorLog = rhs.getErrorLog();
 	return *this;
 }
 
@@ -34,7 +35,10 @@ std::vector<Token>			Lexer::tokenize(const std::string & str)
 		if (!token.empty())
 		{
 			tok_type = this->_identifyToken(token);
-			tokens.push_back(Token(tok_type, token));
+			if (tok_type == Token::Type::UNKNOWN)
+				this->_addError("Unkown token: " + token);
+			else
+				tokens.push_back(Token(tok_type, token));
 		}
 	}
 	return (tokens);
@@ -55,6 +59,10 @@ Token::Type					Lexer::_identifyToken(const std::string &str)
 	if (!(str.compare("\n")))
 	{
 		return Token::Type::DELIM;
+	}
+	if (!(str.compare(";")))
+	{
+		return Token::Type::COMMENT;
 	}
 	fp = this->_isNum(str);
 	if (fp == 0)
@@ -92,7 +100,10 @@ std::string					Lexer::_removeDups(const std::string & str)
 	j = 0;
 	for (i = 0 ; i != str.length();)
 	{
-		nstr[j] = str[i];
+		if (str[i] == '(' || str[i] == ')' || str[i] == '\t')
+			nstr[j] = ' ';
+		else
+			nstr[j] = str[i];
 		if (nstr[j] != '\n' || (str[i] != str[i + 1]))
 			j++;
 		i++;
@@ -101,6 +112,50 @@ std::string					Lexer::_removeDups(const std::string & str)
 	return (nstr);
 }
 
+
+std::string					Lexer::_processString(const std::string & str)
+{
+	std::vector<std::string>	array;
+	std::string					tmp;
+	int							i = 0;
+	int							len = str.length();
+
+	if (array.back() != "|ff")
+		std::cout << "NO SEGV" << std::endl;
+	while (i < len)
+	{
+		tmp.clear();
+		while (i < len && (str[i] == ' ' || str[i] == '\t'))
+			i++;
+		if (i < len && std::isalnum(str[i])) {
+			while (i < len && (std::isalnum(str[i]) || str[i] == '.'))
+			{
+				tmp += str[i++];
+			}
+			array.push_back(tmp);
+		}
+		if (i < len && str[i] == '\n' && array.back() != "\n") {
+			array.push_back("\n");
+		}
+		if (i < len && str[i] == ';') {
+			i++;
+			if (i < len && str[i] == ';')
+				array.push_back(";;");
+			else {
+				while (i < len && str[i] != '\n')
+					i++;
+			}
+		}
+		i++;
+	}
+
+	std::string res;
+	for (auto i : array) {
+		res += i + " ";
+	}
+	return res;
+}
+/*
 std::string					Lexer::_processString(const std::string & str)
 {
 	std::string				nstr;
@@ -113,8 +168,23 @@ std::string					Lexer::_processString(const std::string & str)
 		nstr.replace(i, searchFor.length(), replaceWith);
 		i += replaceWith.length();
 	}
-	std::replace(nstr.begin(), nstr.end(), '(', ' ');
-	std::replace(nstr.begin(), nstr.end(), ')', ' ');
-	std::replace(nstr.begin(), nstr.end(), '\t', ' ');
 	return (nstr);
+}
+*/
+bool						Lexer::hasError(void) const
+{
+	return (this->_hasError);
+}
+
+const std::string &			Lexer::getErrorLog(void) const
+{
+	return (this->_errorLog);
+}
+
+void						Lexer::_addError(std::string const & error)
+{
+	if (!this->_hasError)
+		this->_hasError = true;
+	this->_errorLog += error;
+	this->_errorLog += "\n";
 }

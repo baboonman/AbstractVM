@@ -7,6 +7,7 @@
 
 # include "ExecutionException.hpp"
 # include "AssertFailure.hpp"
+# include "StackSizeError.hpp"
 
 class						VMachine
 {

@@ -9,21 +9,17 @@
 
 namespace Grammar
 {
-	typedef struct		s_ins_info
+	typedef struct			s_ins_info
 	{
-		int				opcode;
-		bool			hasParam;
-	}					t_ins_info;
+		int					opcode;
+		bool				hasParam;
+	}						t_ins_info;
 
 	typedef struct			s_ins
 	{
 		int					opcode;
 		const IOperand *	operand;
 	}						t_ins;
-
-	static const std::vector<std::string>	instructions = {"push", "pop", "dump", "assert", "add", "sub", "mul", "div", "mod", "print", "exit"};
-
-	static const std::vector<std::string>	operandType = {"int8", "int16", "int32", "float", "double"};
 
 	static const std::unordered_map<std::string, t_ins_info>		insMap = {
 							{"push", {0, true}},
@@ -45,8 +41,8 @@ namespace Grammar
 							{"float", eOperandType::Float},
 							{"double", eOperandType::Double}};
 
-	bool									isInstruction(const std::string & str);
-	bool									isOperandType(const std::string & str);
+	bool					isInstruction(const std::string & str);
+	bool					isOperandType(const std::string & str);
 }
 
 #endif

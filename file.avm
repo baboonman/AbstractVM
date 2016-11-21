@@ -1,13 +1,15 @@
+; toto in the garden 
 push int32(42)
 push int32(33)
 
 add
 
 push			float(44.55)
+;toto in the garden 
 
 mul
 
-push double(42.42)
+push double(42.42) ;gjfd
 push int32(42)
 
 dump

@@ -96,7 +96,7 @@ void					VMachine::_add(Grammar::t_ins const & ins)
 	IOperand const		*lhs, *rhs, *res;
 
 	if (this->_stack.size() < 2)
-		std::cout << "ERROR: " << "not enough elem on stack" << std::endl;
+		throw StackSizeError();
 	lhs = this->_stack.back();
 	this->_stack.pop_back();
 	rhs = this->_stack.back();

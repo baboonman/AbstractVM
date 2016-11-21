@@ -10,6 +10,7 @@ SRC= main.cpp \
 	 Grammar.cpp \
 	 ExecutionException.cpp \
 	 AssertFailure.cpp \
+	 StackSizeError.cpp \
 	 OperandFactory.cpp
 
 

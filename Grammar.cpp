@@ -2,10 +2,10 @@
 
 bool			Grammar::isInstruction(const std::string & str)
 {
-	return (std::find(instructions.begin(), instructions.end(), str) != instructions.end());
+	return (insMap.count(str) == 1);
 }
 
 bool			Grammar::isOperandType(const std::string & str)
 {
-	return (std::find(operandType.begin(), operandType.end(), str) != operandType.end());
+	return (opTypeMap.count(str) == 1);
 }

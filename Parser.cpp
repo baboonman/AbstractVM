@@ -31,7 +31,6 @@ std::vector<Grammar::t_ins>		Parser::parseTokens(std::vector<Token> tokens)
 
 	do {
 		token = tokens[i];
-		std::cout << "got token n: " << i << std::endl;
 		if (token.getType() == Token::Type::INST)
 		{
 			info = Grammar::insMap.at(token.getValue());
@@ -39,21 +38,16 @@ std::vector<Grammar::t_ins>		Parser::parseTokens(std::vector<Token> tokens)
 			i++;
 			if (info.hasParam)
 			{
-				std::cout << "has param" << std::endl;
 				if (i == token_size)
 					std::cout << "error expecting argument" << std::endl;
 					// error
 				token = tokens[i];
-				std::cout << "got token n: " << i << std::endl;
-				std::cout << "type : " << static_cast<int>(token.getType()) << std::endl;
 				if (token.getType() == Token::Type::OPTYPE)
 				{
-					std::cout << "getting param" << std::endl;
 					arg_type = Grammar::opTypeMap.at(token.getValue());
 					i++;
 					if (i != token_size) {
 						token = tokens[i];
-						std::cout << "got token n: " << i << std::endl;
 					}
 					else
 						std::cout << "error expecting value" << std::endl;

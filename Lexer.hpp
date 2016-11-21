@@ -5,6 +5,7 @@
 # include <vector>
 # include <iostream>
 # include <sstream>
+# include <cctype>
 # include <algorithm>
 # include "Grammar.hpp"
 # include "Token.hpp"
@@ -19,12 +20,16 @@ class						Lexer
 
 		std::vector<Token>	tokenize(const std::string & str);
 
+		bool				hasError(void) const;
+		const std::string &	getErrorLog(void) const;
 	private:
 		Token::Type			_identifyToken(const std::string &str);
 		std::string			_processString(const std::string & str);
 		std::string			_removeDups(const std::string & str);
 		int					_isNum(const std::string & str);
-
+		void				_addError(std::string const & error);
+		bool				_hasError;
+		std::string			_errorLog;
 
 };
 
