@@ -5,6 +5,9 @@
 # include "OperandFactory.hpp"
 # include "Grammar.hpp"
 
+# include "ExecutionException.hpp"
+# include "AssertFailure.hpp"
+
 class						VMachine
 {
 	public:

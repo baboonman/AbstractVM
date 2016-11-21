@@ -35,7 +35,7 @@ int			main(void)
 	std::vector<Token>				tokens;
 	std::vector<Grammar::t_ins>		program;
 
-	std::ifstream t("file.avm");
+	std::ifstream t("file3.avm");
 	std::stringstream buffer;
 	buffer << t.rdbuf();
 
@@ -52,6 +52,7 @@ int			main(void)
 	{
 		print_ins(ins);
 	}
+	std::cout << "Execution" << std::endl;
 	machina.execute(program);
 	return (0);
 }

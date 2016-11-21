@@ -8,6 +8,8 @@ SRC= main.cpp \
 	 Parser.cpp \
 	 Token.cpp \
 	 Grammar.cpp \
+	 ExecutionException.cpp \
+	 AssertFailure.cpp \
 	 OperandFactory.cpp
 
 

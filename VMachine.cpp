@@ -12,8 +12,6 @@ VMachine::FN VMachine::_fnArray[] = { &VMachine::_push,
 									  &VMachine::_print,
 									  &VMachine::_exit };
 
-
-
 VMachine::VMachine()
 {
 }
@@ -40,21 +38,25 @@ int						VMachine::execute(std::vector<Grammar::t_ins> program)
 	for (auto ins : program)
 	{
 		opcode = ins.opcode;
-		((this)->*(_fnArray[opcode]))(ins);
+		try {
+			((this)->*(_fnArray[opcode]))(ins);
+		} catch (ExecutionException & e) {
+			std::cout << "Ex raised: " << e.what() << std::endl;
+		}
 	}
 	return (0);
 }
 
 void					VMachine::_push(Grammar::t_ins const & ins)
 {
-	if (ins.operand == nullptr)
-		std::cout << "ERROR: " << "no param" << std::endl;
 	this->_stack.push_back(ins.operand);
 }
 
 void					VMachine::_pop(Grammar::t_ins const & ins)
 {
 	(void)ins;
+	if (this->_stack.size() == 0)
+		throw ExecutionException("pop on empty stack");
 	this->_stack.pop_back();
 }
 
@@ -73,8 +75,6 @@ void					VMachine::_assert(Grammar::t_ins const & ins)
 
 	if (this->_stack.size() < 1)
 		std::cout << "ERROR: " << "not enough elem on statck" << std::endl;
-	if (ins.operand == nullptr)
-		std::cout << "ERROR: " << "no param" << std::endl;
 	insOP = ins.operand;
 	stackOP = this->_stack.back();
 	if (insOP->getType() > stackOP->getType())
@@ -87,7 +87,7 @@ void					VMachine::_assert(Grammar::t_ins const & ins)
 	}
 
 	if (insOP->toString() != stackOP->toString())
-		std::cout << "ASSERT FAILED" << std::endl;
+		throw AssertFailure();
 }
 
 void					VMachine::_add(Grammar::t_ins const & ins)
