@@ -67,7 +67,7 @@ int						VMachine::execute(std::vector<Grammar::t_ins> program)
 
 void					VMachine::_printError(const std::string & error) const
 {
-	std::cout << "\033[31mExecution error\033[0m: " << error << std::endl;
+	std::cout << "\033[31mExecution error\033[0m " << error << std::endl;
 }
 
 void					VMachine::_push(Grammar::t_ins const & ins)
@@ -122,9 +122,9 @@ void					VMachine::_add(Grammar::t_ins const & ins)
 
 	if (this->_stack.size() < 2)
 		throw StackSizeError("add", ins.line);
-	lhs = this->_stack.back();
-	this->_stack.pop_back();
 	rhs = this->_stack.back();
+	this->_stack.pop_back();
+	lhs = this->_stack.back();
 	this->_stack.pop_back();
 	if (lhs->getType() >= rhs->getType())
 		res = *lhs + *rhs;
@@ -141,9 +141,9 @@ void					VMachine::_sub(Grammar::t_ins const & ins)
 
 	if (this->_stack.size() < 2)
 		throw StackSizeError("sub", ins.line);
-	lhs = this->_stack.back();
-	this->_stack.pop_back();
 	rhs = this->_stack.back();
+	this->_stack.pop_back();
+	lhs = this->_stack.back();
 	this->_stack.pop_back();
 	if (lhs->getType() >= rhs->getType())
 		res = *lhs - *rhs;
@@ -160,9 +160,9 @@ void					VMachine::_mul(Grammar::t_ins const & ins)
 
 	if (this->_stack.size() < 2)
 		throw StackSizeError("mul", ins.line);
-	lhs = this->_stack.back();
-	this->_stack.pop_back();
 	rhs = this->_stack.back();
+	this->_stack.pop_back();
+	lhs = this->_stack.back();
 	this->_stack.pop_back();
 	if (lhs->getType() >= rhs->getType())
 		res = *lhs * *rhs;
@@ -179,9 +179,9 @@ void					VMachine::_div(Grammar::t_ins const & ins)
 
 	if (this->_stack.size() < 2)
 		throw StackSizeError("div", ins.line);
-	lhs = this->_stack.back();
-	this->_stack.pop_back();
 	rhs = this->_stack.back();
+	this->_stack.pop_back();
+	lhs = this->_stack.back();
 	this->_stack.pop_back();
 	if (rhs->toString() == "0")
 		throw ExecutionException("illegal division by 0.");
@@ -203,9 +203,9 @@ void					VMachine::_mod(Grammar::t_ins const & ins)
 
 	if (this->_stack.size() < 2)
 		throw StackSizeError("div", ins.line);
-	lhs = this->_stack.back();
-	this->_stack.pop_back();
 	rhs = this->_stack.back();
+	this->_stack.pop_back();
+	lhs = this->_stack.back();
 	this->_stack.pop_back();
 	if (rhs->toString() == "0")
 		throw ExecutionException("illegal modulus by 0.");
