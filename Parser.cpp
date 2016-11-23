@@ -30,6 +30,17 @@ const std::string &				Parser::getErrorLog(void) const
 	return this->_errorLog;
 }
 
+bool							Parser::_nextToken(Token & token, std::size_t & i,
+									const std::vector<Token> &tokens, std::size_t len, int line)
+{
+	i++;
+	if (i == len) {
+		this->_addError("premature end of input.", line);
+		return (false);
+	}
+	token = tokens[i];
+	return (true);
+}
 
 std::vector<Grammar::t_ins>		Parser::parseTokens(std::vector<Token> tokens)
 {
@@ -49,29 +60,20 @@ std::vector<Grammar::t_ins>		Parser::parseTokens(std::vector<Token> tokens)
 			onNewLine = true;
 			line++;
 		}
-
 		else if (token.getType() == Token::Type::INST && onNewLine)
 		{
 			onNewLine = false;
 			info = Grammar::insMap.at(token.getValue());
 			new_ins.opcode = info.opcode;
-			i++;
 			if (info.hasParam)
 			{
-				if (i == token_size)
-					this->_addError("premature end of input.", line);
-				else
+				if (this->_nextToken(token, i, tokens, token_size, line))
 				{
-					token = tokens[i];
 					if (token.getType() == Token::Type::OPTYPE)
 					{
 						arg_type = Grammar::opTypeMap.at(token.getValue());
-						i++;
-						if (i == token_size)
-							this->_addError("premature end of input.", line);
-						else
+						if (this->_nextToken(token, i, tokens, token_size, line))
 						{
-							token = tokens[i];
 							if (token.getType() == Token::Type::OPSCAL)
 							{
 								try {
@@ -83,14 +85,15 @@ std::vector<Grammar::t_ins>		Parser::parseTokens(std::vector<Token> tokens)
 							}
 							else
 							{
-								this->_addError("instruction expecting param.", line);
+								this->_addError("instruction expects paramater.", line);
 								i--;
 							}
 						}
 					}
 					else
 					{
-						this->_addError("instruction expecting param.", line);
+						this->_addError("instruction expects a type.", line);
+						i--;
 					}
 				}
 			}
@@ -104,7 +107,6 @@ std::vector<Grammar::t_ins>		Parser::parseTokens(std::vector<Token> tokens)
 		{
 			this->_addError("stray token: " + token.getValue(), line);
 		}
-
 		i++;
 	} while (i < token_size);
 	return program;

@@ -1,0 +1,28 @@
+
+
+push int16(32;) 
+pu int(32)) 
+exit 
+
+push int2(42))
+puh int32(-33)
+
+add int8(12)
+
+push			float 44.55
+
+mul
+g f f
+;;
+;
+push double(4i2.42)
+push int32(5587454542)
+
+
+dump
+
+pop
+
+assert double(42.42)
+
+exit

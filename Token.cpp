@@ -29,13 +29,16 @@ Token::Type					Token::getType(void) const
 	return (this->_type);
 }
 
-std::string					Token::getTypeToString(void) const
+std::string					Token::getValue(void) const
+{
+	return (this->_value);
+}
+
+std::string					Token::_getTypeToString(void) const
 {
 	switch (this->_type) {
 		case Type::INST    : return "INST";
 		case Type::OPTYPE  : return "OPTYPE";
-		case Type::OPINT   : return "OPINT";
-		case Type::OPFLOAT : return "OPFLOAT";
 		case Type::OPSCAL  : return "OPSCAL";
 		case Type::DELIM   : return "DELIM";
 		case Type::COMMENT : return "COMMENT";
@@ -44,7 +47,8 @@ std::string					Token::getTypeToString(void) const
 	}
 }
 
-std::string					Token::getValue(void) const
+std::ostream& operator<<(std::ostream& os, const Token & obj)
 {
-	return (this->_value);
+	os << "Token of type " << obj._getTypeToString() << ": " << obj.getValue();
+	return (os);
 }

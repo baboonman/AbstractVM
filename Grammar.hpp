@@ -41,8 +41,23 @@ namespace Grammar
 							{"float", eOperandType::Float},
 							{"double", eOperandType::Double}};
 
+	static const std::unordered_map<int, std::string>				opInsMap = {
+							{0, "push"},
+							{1, "pop"},
+							{2, "dump"},
+							{3, "assert"},
+							{4, "add"},
+							{5, "sub"},
+							{6, "mul"},
+							{7, "div"},
+							{8, "mod"},
+							{9, "print"},
+							{10, "exit"}};
+	
+
 	bool					isInstruction(const std::string & str);
 	bool					isOperandType(const std::string & str);
+	void					printInstruction(const t_ins & ins);
 }
 
 #endif

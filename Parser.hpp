@@ -21,6 +21,8 @@ class							Parser
 		const std::string &			getErrorLog(void) const;
 
 	private:
+		bool						_nextToken(Token & token, std::size_t & i,
+										const std::vector<Token> &tokens, std::size_t len, int line);
 		void						_addError(std::string const & error, int line);
 		void						_addError(const OverflowError &e, int line);
 

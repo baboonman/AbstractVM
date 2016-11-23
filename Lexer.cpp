@@ -63,7 +63,7 @@ Token::Type					Lexer::_identifyToken(const std::string &str)
 	{
 		return Token::Type::COMMENT;
 	}
-	if (this->_isNum(str) != -1)
+	if (this->_isNum(str) > -1)
 	{
 		return Token::Type::OPSCAL;
 	}
@@ -75,14 +75,13 @@ int						Lexer::_isNum(const std::string &str)
 	int						p = 0;
 	bool					start = true;
 
-	std::cout << "string to check if num " << str << std::endl;
 	for (auto c : str)
 	{
-		if (c == '.' && p == 0)
+		if (c == '.' && p == 0 && !start)
 			p = 1;
-		else if (c == '.')
-			return -1;
-		else if ((c < 48 || c > 57) || (!start & c == '-'))
+		else if (!start && c == '-')
+			return -2;
+		else if ((c < 48 || c > 57) && c != '-')
 			return -1;
 		start = false;
 	}
@@ -106,13 +105,12 @@ void						Lexer::_processContent(const std::string & str, std::vector<std::strin
 {
 	std::string					tmp;
 
-	if (i < len && (std::isalnum(str[i]) || str[i] == '-')) {
-		while (i < len && (std::isalnum(str[i]) || str[i] == '.' || str[i] == '-'))
-		{
-			tmp += str[i++];
-		}
-		array.push_back(tmp);
+	while (i < len && (std::isalnum(str[i]) || str[i] == '.' || str[i] == '-'))
+	{
+		tmp += str[i++];
 	}
+	if (tmp.length() > 0)
+		array.push_back(tmp);
 }
 
 void						Lexer::_processWhitespaces(const std::string & str, int &i, int len)

@@ -2,25 +2,27 @@
 # define TOKEN_HPP
 
 # include <string>
+# include <iostream>
 
-class						Token
+class							Token
 {
 	public:
-		enum class Type		{INST, OPTYPE, OPINT, OPFLOAT, OPSCAL, DELIM, COMMENT, EOI, UNKNOWN};
+		enum class Type			{INST, OPTYPE, OPSCAL, DELIM, COMMENT, EOI, UNKNOWN};
 		
-							Token(void);
-							Token(const Token & rhs);
-							Token(Type type, std::string str);
-		virtual 			~Token(void);
-		Token&				operator=(const Token & rhs);
+								Token(void);
+								Token(const Token & rhs);
+								Token(Type type, std::string str);
+		virtual 				~Token(void);
+		Token&					operator=(const Token & rhs);
+		friend std::ostream&	operator<<(std::ostream& os, const Token & obj);
 
-		Type				getType(void) const;
-		std::string			getValue(void) const;
-		std::string			getTypeToString(void) const;
+		Type					getType(void) const;
+		std::string				getValue(void) const;
 
 	private:
-		Type				_type;
-		std::string			_value;
+		std::string				_getTypeToString(void) const;
+		Type					_type;
+		std::string				_value;
 		
 };
 
