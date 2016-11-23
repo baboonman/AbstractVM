@@ -1,63 +1,43 @@
-#include "Lexer.hpp"
-#include "Parser.hpp"
+#include "Reader.hpp"
 #include "VMachine.hpp"
 
-# include <fstream>
-
-int			main(int ac, char **av)
+int									main(int ac, char **av)
 {
-	Lexer	lex;
-	Parser	pars;
-	VMachine	machina;
-	std::string		input = "file.avm";
-
-	std::vector<Token>				tokens;
+	Reader							reader;
+	VMachine						machine;
 	std::vector<Grammar::t_ins>		program;
+	std::string						input;
+	std::string						option = "-v";
 
-	if (ac == 2)
-	{
-		input = av[1];
+	if (ac == 2) {
+		if (av[1] == option)
+			reader.setVerbose(true);
+		else
+			input = av[1];
 	}
-	std::ifstream t(input);
-	std::stringstream buffer;
-	buffer << t.rdbuf();
+	else if (ac == 3) {
+		if (av[1] == option)
+			reader.setVerbose(true);
+		else {
+			std::cout << "Unknown option " << av[1] << std::endl;
+			return (1);
+		}
+		input = av[2];
+	}
+	else if (ac != 1) {
+		std::cout << "Too many params." << std::endl;
+		return (1);
+	}
 
-	tokens = lex.tokenize(buffer.str());
-	program = pars.parseTokens(tokens);
+	if (input.length() == 0)
+		program = reader.createProgram();
+	else
+		program = reader.createProgram(input);
 
-	std::cout << "Lexer" << std::endl;
-	for (auto tok : tokens)
-	{
-		std::cout << tok << std::endl;
-	}
-	std::cout << "Parser" << std::endl;
-	for (auto ins : program)
-	{
-		Grammar::printInstruction(ins);
-	}
-	if (lex.hasError())
-		std::cout << lex.getErrorLog();
-	if (pars.hasError())
-		std::cout << pars.getErrorLog();
-	if (!lex.hasError() && !pars.hasError()) {
-		std::cout << "Execution" << std::endl;
-		machina.execute(program);
+	if (!(reader.fail())) {
+		if (reader.isVerbose())
+			std::cout << "----- Execution -----" << std::endl;
+		machine.execute(program);
 	}
 	return (0);
-}
-
-int			main(int ac, char *av)
-{
-	Reader	reader;
-	VMachine	machina;
-
-	if (ac == 2)
-		input = av[1];
-	else
-		input = "file.avm";
-
-	program = reader.createProgram(input);
-	if (program.size() > 0) {
-		`
-	}
 }

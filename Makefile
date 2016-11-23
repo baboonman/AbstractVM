@@ -4,15 +4,16 @@ NAME= avm
 
 SRC= main.cpp \
 	 VMachine.cpp \
+	 Reader.cpp \
 	 Lexer.cpp \
 	 Parser.cpp \
 	 Token.cpp \
 	 Grammar.cpp \
+	 OperandFactory.cpp \
 	 ExecutionException.cpp \
 	 AssertFailure.cpp \
 	 StackSizeError.cpp \
-	 OverflowError.cpp \
-	 OperandFactory.cpp
+	 OverflowError.cpp
 
 
 OBJ= $(SRC:.cpp=.o)
