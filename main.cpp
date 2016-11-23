@@ -8,6 +8,7 @@ int									main(int ac, char **av)
 	std::vector<Grammar::t_ins>		program;
 	std::string						input;
 	std::string						option = "-v";
+	int								ret = 1;
 
 	if (ac == 2) {
 		if (av[1] == option)
@@ -37,7 +38,12 @@ int									main(int ac, char **av)
 	if (!(reader.fail())) {
 		if (reader.isVerbose())
 			std::cout << "----- Execution -----" << std::endl;
-		machine.execute(program);
+		ret = machine.execute(program);
+	} else {
+		for (auto p : program) {
+			if (p.operand != nullptr)
+				delete p.operand;
+		}
 	}
-	return (0);
+	return (ret);
 }

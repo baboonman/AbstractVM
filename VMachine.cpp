@@ -77,9 +77,13 @@ void					VMachine::_push(Grammar::t_ins const & ins)
 
 void					VMachine::_pop(Grammar::t_ins const & ins)
 {
+	IOperand const		*stackOP;
+
 	if (this->_stack.size() == 0)
 		throw StackSizeError("pop", ins.line);
+	stackOP = this->_stack.back();
 	this->_stack.pop_back();
+	delete stackOP;
 }
 
 void					VMachine::_dump(Grammar::t_ins const & ins)
@@ -109,6 +113,7 @@ void					VMachine::_assert(Grammar::t_ins const & ins)
 	}
 	if (insOP->toString() != stackOP->toString())
 		throw AssertFailure(ins.line);
+	delete insOP;
 }
 
 void					VMachine::_add(Grammar::t_ins const & ins)
@@ -126,6 +131,8 @@ void					VMachine::_add(Grammar::t_ins const & ins)
 	else
 		res = *rhs + *lhs;
 	this->_stack.push_back(res);
+	delete rhs;
+	delete lhs;
 }
 
 void					VMachine::_sub(Grammar::t_ins const & ins)
@@ -143,6 +150,8 @@ void					VMachine::_sub(Grammar::t_ins const & ins)
 	else
 		res = *rhs - *lhs;
 	this->_stack.push_back(res);
+	delete rhs;
+	delete lhs;
 }
 
 void					VMachine::_mul(Grammar::t_ins const & ins)
@@ -160,6 +169,8 @@ void					VMachine::_mul(Grammar::t_ins const & ins)
 	else
 		res = *rhs * *lhs;
 	this->_stack.push_back(res);
+	delete rhs;
+	delete lhs;
 }
 
 void					VMachine::_div(Grammar::t_ins const & ins)
@@ -179,8 +190,11 @@ void					VMachine::_div(Grammar::t_ins const & ins)
 	else {
 		prom = this->_factory.createOperand(rhs->getType(), lhs->toString());
 		res = *prom / *rhs;
+		delete prom;
 	}
 	this->_stack.push_back(res);
+	delete rhs;
+	delete lhs;
 }
 
 void					VMachine::_mod(Grammar::t_ins const & ins)
@@ -194,14 +208,17 @@ void					VMachine::_mod(Grammar::t_ins const & ins)
 	rhs = this->_stack.back();
 	this->_stack.pop_back();
 	if (rhs->toString() == "0")
-		throw ExecutionException("illegal division by 0.");
+		throw ExecutionException("illegal modulus by 0.");
 	if (lhs->getType() >= rhs->getType())
 		res = *lhs / *rhs;
 	else {
 		prom = this->_factory.createOperand(rhs->getType(), lhs->toString());
 		res = *prom % *rhs;
+		delete prom;
 	}
 	this->_stack.push_back(res);
+	delete rhs;
+	delete lhs;
 }
 
 void					VMachine::_print(Grammar::t_ins const & ins)
