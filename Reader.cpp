@@ -68,24 +68,22 @@ std::vector<Grammar::t_ins>		Reader::createProgram(const std::string & inputFile
 std::vector<Grammar::t_ins>		Reader::createProgram(void)
 {
 	std::vector<Grammar::t_ins>	program;
+	std::stringstream			ss;
 	std::string					input;
-	std::string					str;
-	bool						eof;
+	bool						eof = false;
 
-
-	while (std::cin || eof) {
-		getline(std::cin, str);
-		if (this->_checkEOF(str))
+	while (std::cin && !eof) {
+		getline(std::cin, input);
+		if (this->_checkEOF(input))
 			eof = true;
-		input += str;
-		input += "\n";
+		ss << input << std::endl;
 	}
 	if (!eof) {
 		this->_errorFlag = true;
 		std::cout << "Input must be terminated by ';;'." << std::endl;
 	}
 	if (!(this->_errorFlag)) {
-		program = this->_lexPars(input);
+		program = this->_lexPars(ss.str());
 	}
 	return (program);
 }
