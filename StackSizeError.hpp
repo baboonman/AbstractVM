@@ -6,7 +6,7 @@
 class		StackSizeError : public ExecutionException 
 {
 	public:
-		StackSizeError();
+		StackSizeError(const std::string & instruction, int line);
 };
 
 #endif

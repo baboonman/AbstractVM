@@ -49,6 +49,12 @@ std::string					Token::_getTypeToString(void) const
 
 std::ostream& operator<<(std::ostream& os, const Token & obj)
 {
-	os << "Token of type " << obj._getTypeToString() << ": " << obj.getValue();
+	std::string				valueStr;
+
+	if (obj.getType() != Token::Type::DELIM)
+		valueStr = obj.getValue();
+	else
+		valueStr = "endl";
+	os << "Token of type " << obj._getTypeToString() << " :\t" << valueStr;
 	return (os);
 }

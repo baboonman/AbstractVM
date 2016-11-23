@@ -12,7 +12,9 @@ VMachine::FN VMachine::_fnArray[] = { &VMachine::_push,
 									  &VMachine::_print,
 									  &VMachine::_exit };
 
-VMachine::VMachine()
+OperandFactory VMachine::_factory;
+
+VMachine::VMachine() : _hasExited(false)
 {
 }
 
@@ -23,12 +25,22 @@ VMachine::VMachine(const VMachine & rhs)
 
 VMachine::~VMachine()
 {
+	for (auto op : this->_stack) {
+		delete op;
+	}
+	this->_stack.clear();
 }
 
 VMachine&				VMachine::operator=(const VMachine & rhs)
 {
-	(void)rhs;
-	return (*this);
+	return (copyThis(*this, rhs));
+}
+
+VMachine&				copyThis(VMachine & lhs, const VMachine & rhs)
+{
+	lhs._stack = rhs._stack;
+	lhs._hasExited = rhs._hasExited;
+	return (lhs);
 }
 
 int						VMachine::execute(std::vector<Grammar::t_ins> program)
@@ -41,10 +53,21 @@ int						VMachine::execute(std::vector<Grammar::t_ins> program)
 		try {
 			((this)->*(_fnArray[opcode]))(ins);
 		} catch (ExecutionException & e) {
-			std::cout << "Ex raised: " << e.what() << std::endl;
+			this->_printError(e.what());
+			return (1);
+		} catch (OverflowError & e) {
+			this->_printError(e.what());
+			return (1);
 		}
 	}
+	if (!this->_hasExited)
+		this->_printError("program not correctly terminated ; expecting exit as last instruction.");
 	return (0);
+}
+
+void					VMachine::_printError(const std::string & error) const
+{
+	std::cout << "\033[31mExecution error\033[0m: " << error << std::endl;
 }
 
 void					VMachine::_push(Grammar::t_ins const & ins)
@@ -54,9 +77,8 @@ void					VMachine::_push(Grammar::t_ins const & ins)
 
 void					VMachine::_pop(Grammar::t_ins const & ins)
 {
-	(void)ins;
 	if (this->_stack.size() == 0)
-		throw ExecutionException("pop on empty stack");
+		throw StackSizeError("pop", ins.line);
 	this->_stack.pop_back();
 }
 
@@ -74,7 +96,7 @@ void					VMachine::_assert(Grammar::t_ins const & ins)
 	IOperand const		*insOP, *stackOP;
 
 	if (this->_stack.size() < 1)
-		std::cout << "ERROR: " << "not enough elem on statck" << std::endl;
+		throw StackSizeError("assert", ins.line);
 	insOP = ins.operand;
 	stackOP = this->_stack.back();
 	if (insOP->getType() > stackOP->getType())
@@ -85,18 +107,16 @@ void					VMachine::_assert(Grammar::t_ins const & ins)
 	{
 		insOP = this->_factory.createOperand(stackOP->getType(), insOP->toString());
 	}
-
 	if (insOP->toString() != stackOP->toString())
-		throw AssertFailure();
+		throw AssertFailure(ins.line);
 }
 
 void					VMachine::_add(Grammar::t_ins const & ins)
 {
-	(void)ins;
 	IOperand const		*lhs, *rhs, *res;
 
 	if (this->_stack.size() < 2)
-		throw StackSizeError();
+		throw StackSizeError("add", ins.line);
 	lhs = this->_stack.back();
 	this->_stack.pop_back();
 	rhs = this->_stack.back();
@@ -110,16 +130,27 @@ void					VMachine::_add(Grammar::t_ins const & ins)
 
 void					VMachine::_sub(Grammar::t_ins const & ins)
 {
-	(void)ins;
+	IOperand const		*lhs, *rhs, *res;
+
+	if (this->_stack.size() < 2)
+		throw StackSizeError("sub", ins.line);
+	lhs = this->_stack.back();
+	this->_stack.pop_back();
+	rhs = this->_stack.back();
+	this->_stack.pop_back();
+	if (lhs->getType() >= rhs->getType())
+		res = *lhs - *rhs;
+	else
+		res = *rhs - *lhs;
+	this->_stack.push_back(res);
 }
 
 void					VMachine::_mul(Grammar::t_ins const & ins)
 {
-	(void)ins;
 	IOperand const		*lhs, *rhs, *res;
 
 	if (this->_stack.size() < 2)
-		std::cout << "ERROR: " << "not enough elem on stack" << std::endl;
+		throw StackSizeError("mul", ins.line);
 	lhs = this->_stack.back();
 	this->_stack.pop_back();
 	rhs = this->_stack.back();
@@ -129,25 +160,64 @@ void					VMachine::_mul(Grammar::t_ins const & ins)
 	else
 		res = *rhs * *lhs;
 	this->_stack.push_back(res);
-
 }
 
 void					VMachine::_div(Grammar::t_ins const & ins)
 {
-	(void)ins;
+	IOperand const		*lhs, *rhs, *res, *prom;
+
+	if (this->_stack.size() < 2)
+		throw StackSizeError("div", ins.line);
+	lhs = this->_stack.back();
+	this->_stack.pop_back();
+	rhs = this->_stack.back();
+	this->_stack.pop_back();
+	if (rhs->toString() == "0")
+		throw ExecutionException("illegal division by 0.");
+	if (lhs->getType() >= rhs->getType())
+		res = *lhs / *rhs;
+	else {
+		prom = this->_factory.createOperand(rhs->getType(), lhs->toString());
+		res = *prom / *rhs;
+	}
+	this->_stack.push_back(res);
 }
 
 void					VMachine::_mod(Grammar::t_ins const & ins)
 {
-	(void)ins;
+	IOperand const		*lhs, *rhs, *res, *prom;
+
+	if (this->_stack.size() < 2)
+		throw StackSizeError("div", ins.line);
+	lhs = this->_stack.back();
+	this->_stack.pop_back();
+	rhs = this->_stack.back();
+	this->_stack.pop_back();
+	if (rhs->toString() == "0")
+		throw ExecutionException("illegal division by 0.");
+	if (lhs->getType() >= rhs->getType())
+		res = *lhs / *rhs;
+	else {
+		prom = this->_factory.createOperand(rhs->getType(), lhs->toString());
+		res = *prom % *rhs;
+	}
+	this->_stack.push_back(res);
 }
 
 void					VMachine::_print(Grammar::t_ins const & ins)
 {
-	(void)ins;
+	IOperand const		*stackOP;
+	eOperandType		opType;
+	
+	stackOP = this->_stack.back();
+	opType = stackOP->getType();
+	if (opType != eOperandType::Int8)
+		throw AssertFailure("operand has type " + Grammar::typeToStr(opType), ins.line);
+	std::cout << static_cast<int8_t>(std::stoi(stackOP->toString())) << std::endl;
 }
 
 void					VMachine::_exit(Grammar::t_ins const & ins)
 {
 	(void)ins;
+	this->_hasExited = true;
 }

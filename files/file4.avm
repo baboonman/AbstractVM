@@ -2,7 +2,11 @@
 push int8(-128)
 push int32(33)
 
+dump
+
 add
+
+dump
 
 push			float(44.55)
 ;toto in the garden 
@@ -18,4 +22,19 @@ pop
 
 assert double(42.42)
 
+push int8(111);
+push int8(116);
+push int8(111);
+push int8(116);
+
+dump
+
+print
+pop
+print
+pop
+print
+pop
+print
+pop
 exit

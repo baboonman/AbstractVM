@@ -1,0 +1,9 @@
+push float(0)
+push int32(10)
+dump
+push int8(61)
+print
+pop
+div
+dump
+exit

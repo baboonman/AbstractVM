@@ -1,5 +1,6 @@
 #include "StackSizeError.hpp"
 
-StackSizeError::StackSizeError() : ExecutionException("Error on stack size: not enough elements.")
+StackSizeError::StackSizeError(const std::string & instruction, int line) 
+	: ExecutionException("call of " + instruction + " on line " + std::to_string(line) + " with not enough elements in stack")
 {
 }

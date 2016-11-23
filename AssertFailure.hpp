@@ -6,7 +6,8 @@
 class			AssertFailure : public ExecutionException
 {
 	public:
-		AssertFailure();
+		AssertFailure(int line);
+		AssertFailure(const std::string & cause, int line);
 };
 
 #endif

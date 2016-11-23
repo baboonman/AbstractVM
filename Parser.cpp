@@ -65,6 +65,7 @@ std::vector<Grammar::t_ins>		Parser::parseTokens(std::vector<Token> tokens)
 			onNewLine = false;
 			info = Grammar::insMap.at(token.getValue());
 			new_ins.opcode = info.opcode;
+			new_ins.line = line;
 			if (info.hasParam)
 			{
 				if (this->_nextToken(token, i, tokens, token_size, line))

@@ -19,6 +19,7 @@ namespace Grammar
 	{
 		int					opcode;
 		const IOperand *	operand;
+		int					line;
 	}						t_ins;
 
 	static const std::unordered_map<std::string, t_ins_info>		insMap = {
@@ -41,6 +42,13 @@ namespace Grammar
 							{"float", eOperandType::Float},
 							{"double", eOperandType::Double}};
 
+	static const std::unordered_map<int, std::string>		typeToStrMap = {
+							{0, "int8", },    
+							{1, "int16",},
+							{2, "int32",},
+							{3, "float",},
+							{4, "double"}};
+
 	static const std::unordered_map<int, std::string>				opInsMap = {
 							{0, "push"},
 							{1, "pop"},
@@ -58,6 +66,7 @@ namespace Grammar
 	bool					isInstruction(const std::string & str);
 	bool					isOperandType(const std::string & str);
 	void					printInstruction(const t_ins & ins);
+	std::string				typeToStr(const eOperandType & opType);
 }
 
 #endif

@@ -18,11 +18,11 @@ class						VMachine
 								VMachine(const VMachine & rhs);
 								~VMachine();
 		VMachine&				operator=(const VMachine & rhs);
-
+		friend VMachine&		copyThis(VMachine & lhs, const VMachine & rhs);
 		int						execute(std::vector<Grammar::t_ins> program);
 
 	private:
-		void					_executeIns(Grammar::t_ins const & ins);
+		void					_printError(const std::string & error) const;
 
 		void					_push(Grammar::t_ins const & ins);
 		void					_pop(Grammar::t_ins const & ins);
@@ -37,8 +37,9 @@ class						VMachine
 		void					_exit(Grammar::t_ins const & ins);
 
 		static FN				_fnArray[11];
-		OperandFactory	_factory;
+		static OperandFactory			_factory;
 		std::vector<IOperand const *>	_stack;
+		bool					_hasExited;
 };
 
 
