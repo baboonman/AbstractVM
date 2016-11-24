@@ -88,11 +88,7 @@ inline int8_t								Operand<int8_t>::_toT(std::string s) const
 	ss >> tmp;
 	if (!ss || (tmp < std::numeric_limits<int8_t>::min() || tmp > std::numeric_limits<int8_t>::max()))
 		throw OverflowError("overflow with value ", s);
-	else
-	{
-		ss.clear();
-		ss >> op;
-	}
+	op = static_cast<int8_t>(tmp);
 	return (op);
 }
 
