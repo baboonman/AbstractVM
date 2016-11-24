@@ -137,7 +137,7 @@ void					VMachine::_add(Grammar::t_ins const & ins)
 
 void					VMachine::_sub(Grammar::t_ins const & ins)
 {
-	IOperand const		*lhs, *rhs, *res;
+	IOperand const		*lhs, *rhs, *res, *prom;
 
 	if (this->_stack.size() < 2)
 		throw StackSizeError("sub", ins.line);
@@ -147,8 +147,11 @@ void					VMachine::_sub(Grammar::t_ins const & ins)
 	this->_stack.pop_back();
 	if (lhs->getType() >= rhs->getType())
 		res = *lhs - *rhs;
-	else
-		res = *rhs - *lhs;
+	else {
+		prom = this->_factory.createOperand(rhs->getType(), lhs->toString());
+		res = *prom - *rhs;
+		delete prom;
+	}
 	this->_stack.push_back(res);
 	delete rhs;
 	delete lhs;
