@@ -12,6 +12,10 @@ class								Operand : public IOperand
 {
 	public:
 									Operand(std::string op, eOperandType type);
+									Operand();
+									Operand(IOperand const & rhs);
+
+		IOperand &					operator=(IOperand const & rhs);
 
 		eOperandType				getType( void ) const;
 		int							getPrecision( void ) const;
@@ -37,6 +41,26 @@ template<class T>
 Operand<T>::Operand(std::string op, eOperandType type) : _op_str(op), _type(type)
 {
 	this->_op = this->_toT(op);
+}
+
+template<class T>
+Operand<T>::Operand() : _op_str(""), _type(eOperandType::Int8), _op(0)
+{
+}
+
+template<class T>
+Operand<T>::Operand(const IOperand & rhs)
+{
+	*this = rhs;
+}
+
+template<class T>
+IOperand &							Operand<T>::operator=(IOperand const & rhs)
+{
+	this->_op_str = rhs.toString();
+	this->_type = rhs.getType();
+	this->_op = this->_toT(this->_op_str);
+	return (*this);
 }
 
 template<class T>
