@@ -184,7 +184,7 @@ void					VMachine::_div(Grammar::t_ins const & ins)
 	lhs = this->_stack.back();
 	this->_stack.pop_back();
 	if (rhs->toString() == "0")
-		throw ExecutionException("illegal division by 0.");
+		throw IllegalOperation("divide", ins.line);
 	if (lhs->getType() >= rhs->getType())
 		res = *lhs / *rhs;
 	else {
@@ -208,7 +208,7 @@ void					VMachine::_mod(Grammar::t_ins const & ins)
 	lhs = this->_stack.back();
 	this->_stack.pop_back();
 	if (rhs->toString() == "0")
-		throw ExecutionException("illegal modulus by 0.");
+		throw IllegalOperation("do modulo", ins.line);
 	if (lhs->getType() >= rhs->getType())
 		res = *lhs / *rhs;
 	else {

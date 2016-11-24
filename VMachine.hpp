@@ -8,6 +8,7 @@
 # include "ExecutionException.hpp"
 # include "AssertFailure.hpp"
 # include "StackSizeError.hpp"
+# include "IllegalOperation.hpp"
 
 class						VMachine
 {

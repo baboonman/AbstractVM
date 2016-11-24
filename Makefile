@@ -13,6 +13,7 @@ SRC= main.cpp \
 	 ExecutionException.cpp \
 	 AssertFailure.cpp \
 	 StackSizeError.cpp \
+	 IllegalOperation.cpp \
 	 OverflowError.cpp
 
 
