@@ -1,0 +1,6 @@
+push int8(32)
+push double(666666.666)
+mul
+dump
+exit
+
